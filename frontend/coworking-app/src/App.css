@@ -1,0 +1,38 @@
+.container {
+  margin: 50px auto;
+  width: 300px;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f8f8f8;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+input {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.5rem;
+  width: 90%;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-top: 1rem;
+}
+
+select {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.5rem;
+  width: 95%;
+  font-size: 1rem;
+}

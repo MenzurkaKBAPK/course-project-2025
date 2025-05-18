@@ -1,0 +1,15 @@
+server:
+ port: 8080
+
+spring:
+ datasource:
+   url: jdbc:postgresql://db:5432/booking
+   username: user
+   password: pass
+ jpa:
+   hibernate:
+     ddl-auto: update
+   show-sql: true
+
+jwt:
+ secret: somereallyimportantsecretstringyoudonthavetoknowohyesilikecentraluniversitythisprojectmakesmecrazymeowmeowmeow

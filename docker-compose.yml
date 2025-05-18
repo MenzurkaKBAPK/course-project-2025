@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: auth
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  auth-go:
+    build:
+      context: ./auth/go-auth-service
+    container_name: auth-go
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+
+  backend-java:
+    build:
+      context: ./backend/booking-service
+    container_name: backend-java
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-go
+      - db
+
+  frontend:
+    build:
+      context: ./frontend/coworking-app
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend-java
