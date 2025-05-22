@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte("change_this_to_secure_key")
+var secretKey = []byte("somereallyimportantsecretstringyoudonthavetoknowohyesilikecentraluniversitythisprojectmakesmecrazymeowmeowmeow")
 
 type Claims struct {
 	UserID   int    `json:"user_id"`

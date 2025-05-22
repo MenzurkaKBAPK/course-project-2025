@@ -1,4 +1,7 @@
-import jwt_decode from "jwt-decode";
+import { createContext, useContext, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
@@ -6,7 +9,7 @@ export function AuthProvider({ children }) {
 
   const login = (newToken) => {
     setToken(newToken);
-    const decoded = jwt_decode(newToken);
+    const decoded = jwtDecode(newToken);
     setUserInfo(decoded);
   };
 
@@ -20,4 +23,8 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }

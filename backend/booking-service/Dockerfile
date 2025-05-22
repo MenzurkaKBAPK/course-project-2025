@@ -1,9 +1,15 @@
+FROM gradle:8.5-jdk17 AS build
+
+WORKDIR /app
+COPY build.gradle.kts settings.gradle.kts ./
+COPY src ./src
+RUN gradle build --no-daemon -x test --stacktrace
+
+
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
-COPY . .
-
-RUN ./gradlew build -x test
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
-CMD ["java", "-jar", "build/libs/booking-service-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app/app.jar"]

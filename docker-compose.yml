@@ -1,18 +1,33 @@
-version: "3.8"
-
 services:
-  db:
+  db-auth:
     image: postgres:15
-    container_name: db
+    container_name: db-auth
     restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: auth
     volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/auth:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    networks:
+      - app-network
+
+  db-booking:
+    image: postgres:15
+    container_name: db-booking
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: booking
+    volumes:
+      - ./database/booking:/docker-entrypoint-initdb.d
+    ports:
+      - "5434:5432"
+    networks:
+      - app-network
 
   auth-go:
     build:
@@ -21,7 +36,9 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - db
+      - db-auth
+    networks:
+      - app-network
 
   backend-java:
     build:
@@ -30,8 +47,14 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - db-booking
       - auth-go
-      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-booking:5432/booking
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -41,3 +64,9 @@ services:
       - "5173:5173"
     depends_on:
       - backend-java
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

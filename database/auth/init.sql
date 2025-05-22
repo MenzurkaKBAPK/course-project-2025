@@ -1,9 +1,13 @@
+-- юзеры
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     role VARCHAR(50) NOT NULL DEFAULT 'user'
 );
+
+--admin
 
 INSERT INTO users (username, password, role)
 VALUES (
