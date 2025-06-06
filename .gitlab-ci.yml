@@ -6,6 +6,9 @@ test-auth-app:
   image: golang:latest
   tags:
     - students-buildkit-medium
+  variables:
+    HOME: /tmp
+    GOCACHE: /tmp/.cache
   script:
     - go version
     - cd auth/go-auth-service/internal/handlers
@@ -16,6 +19,9 @@ test-java-app:
   image: gradle:latest
   tags:
     - students-buildkit-medium
+  variables:
+    HOME: /tmp
+    GOCACHE: /tmp/.cache
   script:
     - gradle --version
     - cd backend/booking-service
