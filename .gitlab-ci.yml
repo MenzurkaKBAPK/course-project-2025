@@ -16,7 +16,7 @@ test-auth-app:
 
 test-java-app:
   stage: test
-  image: gradle:latest
+  image: gradle:8.13-jdk17
   tags:
     - students-buildkit-medium
   variables:
