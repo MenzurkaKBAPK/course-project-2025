@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +21,14 @@ public class UserController {
     private final UserRepository userRepository;
 
     @Operation(summary = "Получить всех пользователей")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Operation(summary = "Получить пользователя по ID")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> userOpt = userRepository.findById(id);
@@ -33,12 +36,14 @@ public class UserController {
     }
 
     @Operation(summary = "Создать нового пользователя")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.ok(userRepository.save(user));
     }
 
     @Operation(summary = "Удалить пользователя по ID")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {

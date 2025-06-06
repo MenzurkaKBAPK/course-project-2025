@@ -1,12 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
   const [error, setError] = useState("");
+
+  const { token, login, authReady } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!authReady) return;
+    if (token && location.pathname === "/login") {
+      navigate("/me");
+    }
+  }, [token, authReady, location.pathname, navigate]);
+
+  if (!authReady) {
+    return <div>Загрузка...</div>;
+  }
 
   const handleRegister = async () => {
     setError("");
@@ -46,6 +61,7 @@ export default function RegisterPage() {
       </select>
       <button onClick={handleRegister}>Зарегистрироваться</button>
       {error && <p className="error">{error}</p>}
+      <button onClick={() => navigate("/login")}>Уже есть аккаунт? Войти</button>
     </div>
   );
 }

@@ -7,12 +7,13 @@ import BookingPage from "./pages/BookingPage";
 import BookingHistoryPage from "./pages/BookingHistoryPage";
 import AdminPage from "./pages/AdminPage";
 import Layout from "./components/Layout";
+import RootRedirect from "./components/RootRedirect";
 
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<Navigate to="/me" />} />
+        <Route path="/" element={<RootRedirect />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route

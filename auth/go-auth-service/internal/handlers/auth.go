@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"auth-service/internal/middleware"
@@ -31,6 +32,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	user.Password = string(hashedPassword)
 
 	if err := h.Store.CreateUser(&user); err != nil {
+		log.Println("Register error:", err)
 		http.Error(w, "Could not create user", http.StatusInternalServerError)
 		return
 	}
@@ -41,6 +43,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var creds models.User
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		log.Println("Login error:", err)
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}

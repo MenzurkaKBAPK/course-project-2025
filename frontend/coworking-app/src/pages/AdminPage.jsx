@@ -1,20 +1,30 @@
+import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 
 export default function AdminPage() {
-  const { token } = useAuth();
+  const { token, userInfo } = useAuth();
+
   const [users, setUsers] = useState([]);
   const [slots, setSlots] = useState([]);
   const [places, setPlaces] = useState([]);
   const [newSlot, setNewSlot] = useState({ time: "", place: "" });
   const [newPlace, setNewPlace] = useState("");
 
-  const authHeader = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
+  const authHeader = token
+    ? {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    : null;
+  
+  if (!userInfo || userInfo.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
 
   const fetchAll = () => {
+    if (!authHeader || userInfo?.role !== "admin") return;
+
     fetch("http://localhost:8080/api/users", { headers: authHeader })
       .then((res) => res.json())
       .then(setUsers);
@@ -96,9 +106,9 @@ export default function AdminPage() {
             <li key={s.id}>{s.time} — {s.place}</li>
           ))}
         </ul>
-        <h3>➕ Добавить слот</h3>
+        <h3>Добавить слот</h3>
         <input
-          placeholder="Время (например 14:00)"
+          placeholder="Время (например, 14:00)"
           value={newSlot.time}
           onChange={(e) => setNewSlot({ ...newSlot, time: e.target.value })}
         />
@@ -119,7 +129,7 @@ export default function AdminPage() {
             <li key={p.id}>{p.name}</li>
           ))}
         </ul>
-        <h3>➕ Добавить место</h3>
+        <h3>Добавить место</h3>
         <input
           placeholder="Название места"
           value={newPlace}

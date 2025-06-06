@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -54,5 +55,12 @@ public class BookingController {
     ) {
         Booking updated = bookingService.rescheduleBooking(id, request);
         return ResponseEntity.ok(updated);
+    }
+
+    @Operation(summary = "Получить доступные слоты для места на сегодня")
+    @GetMapping("/available-slots/{workspaceId}")
+    public ResponseEntity<List<String>> getAvailableSlots(@PathVariable Long workspaceId) {
+        List<String> slots = bookingService.getAvailableSlots(workspaceId, LocalDate.now());
+        return ResponseEntity.ok(slots);
     }
 }

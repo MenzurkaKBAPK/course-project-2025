@@ -13,7 +13,7 @@ export default function BookingPage() {
     if (!selected) return;
     setMessage("");
 
-    const res = await fetch("http://localhost:8080/bookings", {
+    const res = await fetch("http://localhost:8080/api/bookings", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

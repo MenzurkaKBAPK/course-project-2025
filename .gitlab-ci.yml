@@ -1,0 +1,22 @@
+stages:
+  - test
+
+test-auth-app:
+  stage: test
+  image: golang:latest
+  tags:
+    - students-buildkit-medium
+  script:
+    - go version
+    - cd auth/go-auth-service/internal/handlers
+    - go test ./... -v -race
+
+test-java-app:
+  stage: test
+  image: gradle:latest
+  tags:
+    - students-buildkit-medium
+  script:
+    - gradle --version
+    - cd backend/booking-service
+    - ./gradlew clean test

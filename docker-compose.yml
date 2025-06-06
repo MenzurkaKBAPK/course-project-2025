@@ -7,8 +7,6 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: auth
-    volumes:
-      - ./database/auth:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
     networks:
@@ -22,10 +20,40 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: booking
-    volumes:
-      - ./database/booking:/docker-entrypoint-initdb.d
     ports:
       - "5434:5432"
+    networks:
+      - app-network
+
+  migrate-auth:
+    image: migrate/migrate
+    container_name: migrate-auth
+    depends_on:
+      - db-auth
+    volumes:
+      - ./database/auth/migrations:/migrations
+    entrypoint: >
+      sh -c "
+        until migrate -path=/migrations -database postgres://user:pass@db-auth:5432/auth?sslmode=disable up; do
+          echo 'Waiting for db-auth to be ready...';
+          sleep 2;
+        done"
+    networks:
+      - app-network
+
+  migrate-booking:
+    image: migrate/migrate
+    container_name: migrate-booking
+    depends_on:
+      - db-booking
+    volumes:
+      - ./database/booking/migrations:/migrations
+    entrypoint: >
+      sh -c "
+        until migrate -path=/migrations -database postgres://user:pass@db-booking:5432/booking?sslmode=disable up; do
+          echo 'Waiting for db-booking to be ready...';
+          sleep 2;
+        done"
     networks:
       - app-network
 

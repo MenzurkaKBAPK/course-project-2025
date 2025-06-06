@@ -13,6 +13,69 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  background: #2d2d2d;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+
+input, select {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.7rem 1rem;
+  width: 100%;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 0.7rem 1.5rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  background: #646cff;
+  color: #fff;
+  font-size: 1.1rem;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #535bf2;
+}
+
+h1 {
+  font-size: 2.2em;
+  margin-bottom: 1.2em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.error {
+  color: #ff4d4f;
+  margin-top: 1rem;
+  text-align: center;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -22,47 +85,9 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.5rem;
+    min-width: 90vw;
   }
 }
