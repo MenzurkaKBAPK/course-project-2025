@@ -25,4 +25,5 @@ test-java-app:
   script:
     - gradle --version
     - cd backend/booking-service
+    - chmod +x gradlew
     - ./gradlew clean test
