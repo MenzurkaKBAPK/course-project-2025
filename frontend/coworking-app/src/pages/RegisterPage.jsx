@@ -5,10 +5,9 @@ import { useAuth } from "../auth/AuthContext";
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user");
   const [error, setError] = useState("");
 
-  const { token, login, authReady } = useAuth();
+  const { token, authReady } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -29,7 +28,7 @@ export default function RegisterPage() {
       const res = await fetch("http://localhost:8081/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, role }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (!res.ok) throw new Error("Ошибка при регистрации");
@@ -55,10 +54,6 @@ export default function RegisterPage() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <select value={role} onChange={(e) => setRole(e.target.value)}>
-        <option value="user">Пользователь</option>
-        <option value="admin">Администратор</option>
-      </select>
       <button onClick={handleRegister}>Зарегистрироваться</button>
       {error && <p className="error">{error}</p>}
       <button onClick={() => navigate("/login")}>Уже есть аккаунт? Войти</button>
