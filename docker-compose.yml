@@ -65,6 +65,20 @@ services:
       - "8081:8081"
     depends_on:
       - db-auth
+    environment:
+      AUTH_DB_HOST: db-auth
+      AUTH_DB_PORT: 5432
+      AUTH_DB_USER: user
+      AUTH_DB_PASSWORD: pass
+      AUTH_DB_NAME: auth
+      AUTH_DB_SSLMODE: disable
+
+      BOOKING_DB_HOST: db-booking
+      BOOKING_DB_PORT: 5432
+      BOOKING_DB_USER: user
+      BOOKING_DB_PASSWORD: pass
+      BOOKING_DB_NAME: booking
+      BOOKING_DB_SSLMODE: disable
     networks:
       - app-network
 
