@@ -51,6 +51,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	adminUser := os.Getenv("ADMIN_USERNAME")
+	adminPass := os.Getenv("ADMIN_PASSWORD")
+
+	if err := store.EnsureAdminUser(adminUser, adminPass); err != nil {
+		log.Fatalf("Failed to ensure admin user: %v", err)
+	}
+
 	h := &handlers.AuthHandler{Store: store}
 
 	// лимитер для http запросов (не более 5 в минуту) => БД в безопасности

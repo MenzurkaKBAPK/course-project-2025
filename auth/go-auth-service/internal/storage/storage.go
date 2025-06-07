@@ -2,10 +2,14 @@ package storage
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
+	"log"
 
 	"auth-service/internal/models"
 
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Storage struct {
@@ -72,4 +76,36 @@ func (s *Storage) GetUserByUsername(username string) (*models.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (s *Storage) EnsureAdminUser(username, password string) error {
+	if username == "" || password == "" {
+		return errors.New("missing admin username or password")
+	}
+
+	user, err := s.GetUserByUsername(username)
+	if err == nil && user != nil {
+		log.Printf("Admin user '%s' already exists", username)
+		return nil
+	}
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return fmt.Errorf("error checking admin existence: %w", err)
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("error hashing password: %w", err)
+	}
+
+	admin := &models.User{
+		Username: username,
+		Password: string(hashed),
+		Role:     "admin",
+	}
+
+	if err := s.CreateUser(admin); err != nil {
+		return fmt.Errorf("error creating admin user: %w", err)
+	}
+
+	return nil
 }

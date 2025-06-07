@@ -66,6 +66,9 @@ services:
     depends_on:
       - db-auth
     environment:
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
+
       AUTH_DB_HOST: db-auth
       AUTH_DB_PORT: 5432
       AUTH_DB_USER: user
