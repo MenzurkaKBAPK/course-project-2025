@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"auth-service/internal/models"
 
@@ -22,10 +23,22 @@ func New(authDSN, bookingDSN string) (*Storage, error) {
 	if err != nil {
 		return nil, err
 	}
+	if err := waitForDB(authDB, 10, 2*time.Second); err != nil {
+		return nil, fmt.Errorf("auth db: %w", err)
+	}
+	if err := waitForTable(authDB, "users", 10, 2*time.Second); err != nil {
+		return nil, fmt.Errorf("users table: %w", err)
+	}
 
 	bookingDB, err := sql.Open("postgres", bookingDSN)
 	if err != nil {
 		return nil, err
+	}
+	if err := waitForDB(bookingDB, 10, 2*time.Second); err != nil {
+		return nil, fmt.Errorf("booking db: %w", err)
+	}
+	if err := waitForTable(bookingDB, "app_user", 10, 2*time.Second); err != nil {
+		return nil, fmt.Errorf("app_user table: %w", err)
 	}
 
 	return &Storage{
@@ -108,4 +121,30 @@ func (s *Storage) EnsureAdminUser(username, password string) error {
 	}
 
 	return nil
+}
+
+func waitForDB(db *sql.DB, maxRetries int, delay time.Duration) error {
+	for i := 0; i < maxRetries; i++ {
+		if err := db.Ping(); err == nil {
+			return nil
+		}
+		log.Printf("Waiting for DB to be ready... (%d/%d)", i+1, maxRetries)
+		time.Sleep(delay)
+	}
+	return fmt.Errorf("database not reachable after %d attempts", maxRetries)
+}
+
+func waitForTable(db *sql.DB, table string, maxRetries int, delay time.Duration) error {
+	query := fmt.Sprintf("SELECT 1 FROM %s LIMIT 1", table)
+	var err error
+
+	for i := 0; i < maxRetries; i++ {
+		_, err = db.Query(query)
+		if err == nil {
+			return nil
+		}
+		log.Printf("Waiting for table '%s' to be ready... (%d/%d)", table, i+1, maxRetries)
+		time.Sleep(delay)
+	}
+	return fmt.Errorf("table not ready after %d attempts", maxRetries)
 }

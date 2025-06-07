@@ -60,8 +60,8 @@ func main() {
 
 	h := &handlers.AuthHandler{Store: store}
 
-	// лимитер для http запросов (не более 5 в минуту) => БД в безопасности
-	limiter := httprate.LimitByIP(5, 1*time.Minute)
+	// лимитер для http запросов (не более 30 в минуту) => БД в безопасности
+	limiter := httprate.LimitByIP(30, 1*time.Minute)
 
 	mux := http.NewServeMux()
 	mux.Handle("/register", limiter(http.HandlerFunc(h.Register)))
