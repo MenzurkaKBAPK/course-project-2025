@@ -1,0 +1,117 @@
+services:
+  db-auth:
+    image: postgres:15
+    container_name: db-auth
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: auth
+    ports:
+      - "5433:5432"
+    networks:
+      - app-network
+
+  db-booking:
+    image: postgres:15
+    container_name: db-booking
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: booking
+    ports:
+      - "5434:5432"
+    networks:
+      - app-network
+
+  migrate-auth:
+    image: migrate/migrate
+    container_name: migrate-auth
+    depends_on:
+      - db-auth
+    volumes:
+      - ./database/auth/migrations:/migrations
+    entrypoint: >
+      sh -c "
+        until migrate -path=/migrations -database postgres://user:pass@db-auth:5432/auth?sslmode=disable up; do
+          echo 'Waiting for db-auth to be ready...';
+          sleep 2;
+        done"
+    networks:
+      - app-network
+
+  migrate-booking:
+    image: migrate/migrate
+    container_name: migrate-booking
+    depends_on:
+      - db-booking
+    volumes:
+      - ./database/booking/migrations:/migrations
+    entrypoint: >
+      sh -c "
+        until migrate -path=/migrations -database postgres://user:pass@db-booking:5432/booking?sslmode=disable up; do
+          echo 'Waiting for db-booking to be ready...';
+          sleep 2;
+        done"
+    networks:
+      - app-network
+
+  auth-go:
+    build:
+      context: ./auth/go-auth-service
+    container_name: auth-go
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db-auth
+    environment:
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
+
+      AUTH_DB_HOST: db-auth
+      AUTH_DB_PORT: 5432
+      AUTH_DB_USER: user
+      AUTH_DB_PASSWORD: pass
+      AUTH_DB_NAME: auth
+      AUTH_DB_SSLMODE: disable
+
+      BOOKING_DB_HOST: db-booking
+      BOOKING_DB_PORT: 5432
+      BOOKING_DB_USER: user
+      BOOKING_DB_PASSWORD: pass
+      BOOKING_DB_NAME: booking
+      BOOKING_DB_SSLMODE: disable
+    networks:
+      - app-network
+
+  backend-java:
+    build:
+      context: ./backend/booking-service
+    container_name: backend-java
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-booking
+      - auth-go
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-booking:5432/booking
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend/coworking-app
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend-java
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

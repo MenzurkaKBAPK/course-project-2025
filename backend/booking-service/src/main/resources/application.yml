@@ -1,0 +1,32 @@
+server:
+ port: 8080
+
+spring:
+ datasource:
+   url: jdbc:postgresql://db-booking:5432/booking
+   username: user
+   password: pass
+ jpa:
+   hibernate:
+     ddl-auto: update
+   show-sql: true
+
+jwt:
+ secret: somereallyimportantsecretstringyoudonthavetoknowohyesilikecentraluniversitythisprojectmakesmecrazymeowmeowmeow
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+#logging:
+#  level:
+#    root: DEBUG
+#    com.app.security: DEBUG
+#    org.springframework.web: DEBUG
+#    org.springframework.security: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql: TRACE
+#  file:
+#    name: logs/app.log

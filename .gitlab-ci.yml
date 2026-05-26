@@ -1,0 +1,29 @@
+stages:
+  - test
+
+test-auth-app:
+  stage: test
+  image: golang:latest
+  tags:
+    - students-buildkit-medium
+  variables:
+    HOME: /tmp
+    GOCACHE: /tmp/.cache
+  script:
+    - go version
+    - cd auth/go-auth-service/internal/handlers
+    - go test ./... -v -race
+
+test-java-app:
+  stage: test
+  image: gradle:8.13-jdk17
+  tags:
+    - students-buildkit-medium
+  variables:
+    HOME: /tmp
+    GOCACHE: /tmp/.cache
+  script:
+    - gradle --version
+    - cd backend/booking-service
+    - chmod +x gradlew
+    - ./gradlew clean test
